@@ -42,12 +42,12 @@ void generate_random_matrix(int** A, int n, int m, int min_val, int max_val) {
     }
 }
 
-void matrix_multiply_reference(int** A, int** B, int**& C) {
+int** matrix_multiply_reference(int** A, int** B) {
     int n = sizeof(A)/sizeof(A[0]);
     int m = sizeof(A[0])/sizeof(A[0][0]);
     int p = sizeof(B[0])/sizeof(B[0][0]);
 
-    C = new int*[n];
+    int** C = new int*[n];
     for (int i = 0; i < n; i++) {
         C[i] = new int[p];
     }
@@ -62,27 +62,81 @@ void matrix_multiply_reference(int** A, int** B, int**& C) {
     }
 }
 
-int main() {
-    int A[2][3] = {{1, 2, 3}, {4, 5, 6}};
-    int B[3][2] = {{7, 8}, {9, 10}, {11, 12}};
+bool compare_matrices(int** A, int** B) {
+    int n = sizeof(A)/sizeof(A[0]);
+    int m = sizeof(A[0])/sizeof(A[0][0]);
+    int p = sizeof(B[0])/sizeof(B[0][0]);
 
-    // Perform matrix multiplication and print the result
-    int** C = matrix_multiply(A, B);
-    for (int i = 0; i < 2; i++) {
-        for (int j = 0; j < 2; j++) {
-            std::cout << C[i][j] << " ";
+    int** C;
+    matrix_multiply(A, B, C);
+
+    int** C_ref;
+    matrix_multiply_reference(A, B, C_ref, n, m, p);
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < p; j++) {
+            if (C[i][j] != C_ref[i][j]) {
+                return false;
+            }
         }
-        std::cout << std::endl;
     }
 
-    // Free memory for the result matrix
-    for (int i = 0; i < 2; i++) {
-        delete[] C[i];
+    return true;
+}
+
+
+// Define the main function
+int main() {
+    // Set the size of the matrices and the range of values
+    const int n = 3;
+    const int m = 2;
+    const int p = 4;
+    const int min_val = -10;
+    const int max_val = 10;
+
+    // Allocate memory for the input matrices
+    int** A = new int*[n];
+    int** B = new int*[m];
+    for (int i = 0; i < n; i++) {
+        A[i] = new int[m];
     }
+    for (int i = 0; i < m; i++) {
+        B[i] = new int[p];
+    }
+
+    // Generate random values for the input matrices
+    generate_random_matrix(A, n, m, min_val, max_val);
+    generate_random_matrix(B, m, p, min_val, max_val);
+
+    // Test the matrix multiplication function
+    std::cout << "Testing matrix multiplication..." << std::endl;
+    int** C = matrix_multiply(A, B);
+    int** C_ref = matrix_multiply_reference(A, B);
+    if (compare_matrices(C, C_ref)) {
+        std::cout << "Matrix multiplication test passed." << std::endl;
+    } else {
+        std::cout << "Matrix multiplication test failed." << std::endl;
+    }
+
+    // Free memory for the matrices
+    for (int i = 0; i < n; i++) {
+        delete[] A[i];
+    }
+    for (int i = 0; i < m; i++) {
+        delete[] B[i];
+    }
+    for (int i = 0; i < n; i++) {
+        delete[] C[i];
+        delete[] C_ref[i];
+    }
+    delete[] A;
+    delete[] B;
     delete[] C;
+    delete[] C_ref;
 
     return 0;
 }
+
 
 //------------------------------------------------------------------------
 // test_case_1_sort_basic
@@ -437,29 +491,29 @@ ECE4750_CHECK_INT_EQ( ece4750_get_heap_usage(), 0 );
 
 int main( int argc, char** argv )
 {
-__n = ( argc == 1 ) ? 0 : ece4750_atoi( argv[1] );
+    __n = ( argc == 1 ) ? 0 : ece4750_atoi( argv[1] );
 
-if ( (__n <= 0) || (__n == 1 ) ) test_case_1_sort_basic();
+    if ( (__n <= 0) || (__n == 1 ) ) test_case_1_sort_basic();
 
-//''' LAB TASK '''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-// Add all test cases here (make sure to check __n appropriately!)
-//''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''\/
+    //''' LAB TASK '''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+    // Add all test cases here (make sure to check __n appropriately!)
+    //''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''\/
 
-if ( (__n <= 0) || (__n == 2 ) ) test_case_2_sort_five_element();
-if ( (__n <= 0) || (__n == 3 ) ) test_case_3_sort_empty();
-if ( (__n <= 0) || (__n == 4 ) ) test_case_4_sort_one_element();
-if ( (__n <= 0) || (__n == 5 ) ) test_case_5_sort_two_element();
-if ( (__n <= 0) || (__n == 6 ) ) test_case_6_sort_almost_sorted();
-if ( (__n <= 0) || (__n == 7 ) ) test_case_7_sort_sorted();
-if ( (__n <= 0) || (__n == 8 ) ) test_case_8_sort_reversed();
-if ( (__n <= 0) || (__n == 9 ) ) test_case_9_sort_few_unique();
-if ( (__n <= 0) || (__n == 10) ) test_case_10_sort_random_many_4();
-if ( (__n <= 0) || (__n == 11) ) test_case_11_sort_random_64();
-if ( (__n <= 0) || (__n == 12) ) test_case_12_sort_random_67();
-if ( (__n <= 0) || (__n == 13) ) test_case_13_sort_eval_dataset();
+    if ( (__n <= 0) || (__n == 2 ) ) test_case_2_sort_five_element();
+    if ( (__n <= 0) || (__n == 3 ) ) test_case_3_sort_empty();
+    if ( (__n <= 0) || (__n == 4 ) ) test_case_4_sort_one_element();
+    if ( (__n <= 0) || (__n == 5 ) ) test_case_5_sort_two_element();
+    if ( (__n <= 0) || (__n == 6 ) ) test_case_6_sort_almost_sorted();
+    if ( (__n <= 0) || (__n == 7 ) ) test_case_7_sort_sorted();
+    if ( (__n <= 0) || (__n == 8 ) ) test_case_8_sort_reversed();
+    if ( (__n <= 0) || (__n == 9 ) ) test_case_9_sort_few_unique();
+    if ( (__n <= 0) || (__n == 10) ) test_case_10_sort_random_many_4();
+    if ( (__n <= 0) || (__n == 11) ) test_case_11_sort_random_64();
+    if ( (__n <= 0) || (__n == 12) ) test_case_12_sort_random_67();
+    if ( (__n <= 0) || (__n == 13) ) test_case_13_sort_eval_dataset();
 
-//''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''/\
+    //''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''/\
 
-ece4750_wprintf( L"\n\n" );
-return ece4750_check_status;
+    ece4750_wprintf( L"\n\n" );
+    return ece4750_check_status;
 }
