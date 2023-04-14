@@ -1,25 +1,24 @@
-#include "ece4750.h"
+#include "../app/ece4750/ece4750.h"
 #include "ubmark-sort.h"
 #include "ubmark-sort.dat"
 
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
+// gcc ubmark-matrix-matrix-mult-xcel.c -std=c99 -O3 -o  matrix
 
 int** matrix_multiply(int** A, int** B) {
     // Calculate the sizes of the input matrices
     int n = sizeof(A) / sizeof(A[0]);   // number of rows in A
     int m = sizeof(A[0]) / sizeof(A[0][0]);  // number of columns in A
     int p = sizeof(B[0]) / sizeof(B[0][0]);  // number of columns in B
+    int i = 0;
 
     // Allocate memory for the result matrix C
-    int** C = ece4750_malloc( int 32 ) int*[n];
-    for (int i = 0; i < n; i++) {
-        C[i] = ece4750_malloc( int 32 ) int[p];
+    int** C = ece4750_malloc( 32 );
+    for (i = 0; i < n; i++) {
+        C[i] = ece4750_malloc( 32 );
     }
 
     // Perform matrix multiplication
-    for (int i = 0; i < n; i++) {      // for each row of A
+    for (i = 0; i < n; i++) {      // for each row of A
         for (int j = 0; j < p; j++) {      // for each column of B
             C[i][j] = 0;       // initialize the element at row i and column j in C to 0
             for (int k = 0; k < m; k++) {   // for each element in the ith row of A and jth column of B
@@ -35,12 +34,13 @@ int** matrix_multiply(int** A, int** B) {
 void generate_random_matrix(int** A, int n, int m, int min_val, int max_val) {
     // Set the seed for the random number generator
     ece4750_srand(0x0000f1ef);
+    int i = 0;
 
     // Calculate the range of values that can be generated
     int range = max_val - min_val + 1;
 
     // Generate random values for each element of the matrix
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
             // Generate a random integer between min_val and max_val (inclusive)
             // and assign it to the current element of the matrix
@@ -56,15 +56,16 @@ int** matrix_multiply_reference(int** A, int** B) {
     int n = sizeof(A)/sizeof(A[0]);  // number of rows in A
     int m = sizeof(A[0])/sizeof(A[0][0]);  // number of columns in A
     int p = sizeof(B[0])/sizeof(B[0][0]);  // number of columns in B
+    int i = 0;
 
     // Allocate memory for the result matrix C
-    int** C = ece4750_malloc( int 32 ) int*[n];
-    for (int i = 0; i < n; i++) {
-        C[i] = ece4750_malloc( int 32 ) int[p];
+    int** C = ece4750_malloc( 32 );
+    for (i = 0; i < n; i++) {
+        C[i] = ece4750_malloc( 32 );
     }
 
     // Perform matrix multiplication
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
 
             // Initialize the element of C with 0
@@ -81,34 +82,35 @@ int** matrix_multiply_reference(int** A, int** B) {
     return C;
 }
 
-bool compare_matrices(int** A, int** B) {
+int compare_matrices(int** A, int** B) {
     // Calculate the number of rows, columns and depth of matrices A and B
     int n = sizeof(A)/sizeof(A[0]); // number of rows in A
     int m = sizeof(A[0])/sizeof(A[0][0]); // number of columns in A
     int p = sizeof(B[0])/sizeof(B[0][0]); // number of columns in B
+    int i = 0;
 
     // Declare two 2D integer arrays "C" and "C_ref"
     int** C;
     int** C_ref;
 
     // Call the function "matrix_multiply" with input parameters "A", "B", and "C"
-    C = matrix_multiply(A, B, C);
+    C = matrix_multiply(A, B);
 
     // Call the function "matrix_multiply_reference" with input parameters "A", "B", "C_ref", "n", "m", and "p"
-    C_ref = matrix_multiply_reference(A, B, C_ref, n, m, p);
+    C_ref = matrix_multiply_reference(A, B);
 
     // Compare each element of matrices "C" and "C_ref"
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
             // If an element of "C" is not equal to the corresponding element of "C_ref", return false
             if (C[i][j] != C_ref[i][j]) {
-                return false;
+                return 0;
             }
         }
     }
 
     // If all elements of "C" are equal to the corresponding elements of "C_ref", return true
-    return true;
+    return 1;
 
 }
 
@@ -123,13 +125,13 @@ bool compare_matrices(int** A, int** B) {
     // const int max_val = 10;
 
     // // Allocate memory for the input matrices
-    // int** A = ece4750_malloc( int 32 ) int*[n];
-    // int** B = ece4750_malloc( int 32 ) int*[m];
+    // int** A = ece4750_malloc( 32 ) ;
+    // int** B = ece4750_malloc( 32 ) ;
     // for (int i = 0; i < n; i++) {
-    //     A[i] = ece4750_malloc( int 32 ) int[m];
+    //     A[i] = ece4750_malloc( 32 );
     // }
     // for (int i = 0; i < m; i++) {
-    //     B[i] = ece4750_malloc( int 32 ) int[p];
+    //     B[i] = ece4750_malloc( 32 ); 
     // }
 
     // // Generate random values for the input matrices
@@ -137,13 +139,13 @@ bool compare_matrices(int** A, int** B) {
     // generate_random_matrix(B, m, p, min_val, max_val);
 
     // // Test the matrix multiplication function
-    // std::cout << "Testing matrix multiplication..." << std::endl;
+    // //cout << "Testing matrix multiplication...\n";
     // int** C = matrix_multiply(A, B);
     // int** C_ref = matrix_multiply_reference(A, B);
-    // if (compare_matrices(C, C_ref)) {
-    //     std::cout << "Matrix multiplication test passed." << std::endl;
+    // if (compare_matrices(C, C_ref) == 1) {
+    //     //cout << "Matrix multiplication test passed.\n";
     // } else {
-    //     std::cout << "Matrix multiplication test failed." << std::endl;
+    //     //cout << "Matrix multiplication test failed.\n";
     // }
 
     // // Free memory for the matrices
@@ -178,15 +180,16 @@ ECE4750_CHECK( L"test_case_1_mult_basic" );
     const int p = 3;
     const int min_val = 0;
     const int max_val = 5;
+    int i = 0;
 
     // Allocate memory for the input matrices
-    int** A = ece4750_malloc( int 32 ) int*[n];
-    int** B = ece4750_malloc( int 32 ) int*[m];
-    for (int i = 0; i < n; i++) {
-        A[i] = ece4750_malloc( int 32 ) int[m];
+    int** A = ece4750_malloc( 32 ) ;
+    int** B = ece4750_malloc( 32 ) ;
+    for (i = 0; i < n; i++) {
+        A[i] = ece4750_malloc( 32 );
     }
-    for (int i = 0; i < m; i++) {
-        B[i] = ece4750_malloc( int 32 ) int[p];
+    for (i = 0; i < m; i++) {
+        B[i] = ece4750_malloc( 32 ); 
     }
 
     // Generate random values for the input matrices
@@ -194,23 +197,23 @@ ECE4750_CHECK( L"test_case_1_mult_basic" );
     generate_random_matrix(B, m, p, min_val, max_val);
 
     // Test the matrix multiplication function
-    std::cout << "Testing matrix multiplication..." << std::endl;
+    //cout << "Testing matrix multiplication...\n";
     int** C = matrix_multiply(A, B);
     int** C_ref = matrix_multiply_reference(A, B);
-    if (compare_matrices(C, C_ref)) {
-        std::cout << "Matrix multiplication test passed." << std::endl;
+    if (compare_matrices(C, C_ref) == 1) {
+        //cout << "Matrix multiplication test passed.\n";
     } else {
-        std::cout << "Matrix multiplication test failed." << std::endl;
+        //cout << "Matrix multiplication test failed.\n";
     }
 
     // Free memory for the matrices
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( A[i] );
     }
-    for (int i = 0; i < m; i++) {
+    for (i = 0; i < m; i++) {
         ece4750_free( B[i] );
     }
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( C[i] );
         ece4750_free( C_ref[i] );
     }
@@ -220,7 +223,7 @@ ECE4750_CHECK( L"test_case_1_mult_basic" );
     ece4750_free(C_ref);
 
     // Compare each element of matrices "C" and "C_ref"
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
             // If an element of "C" is not equal to the corresponding element of "C_ref", return false
             ECE4750_CHECK_INT_EQ( C[i] , C_ref[i] );
@@ -247,15 +250,16 @@ void test_case_2_mult_five_element()
     const int p = 5;
     const int min_val = 0;
     const int max_val = 5;
+    int i = 0;
 
     // Allocate memory for the input matrices
-    int** A = ece4750_malloc( int 32 ) int*[n];
-    int** B = ece4750_malloc( int 32 ) int*[m];
-    for (int i = 0; i < n; i++) {
-        A[i] = ece4750_malloc( int 32 ) int[m];
+    int** A = ece4750_malloc( 32 ) ;
+    int** B = ece4750_malloc( 32 ) ;
+    for (i = 0; i < n; i++) {
+        A[i] = ece4750_malloc( 32 );
     }
-    for (int i = 0; i < m; i++) {
-        B[i] = ece4750_malloc( int 32 ) int[p];
+    for (i = 0; i < m; i++) {
+        B[i] = ece4750_malloc( 32 ); 
     }
 
     // Generate random values for the input matrices
@@ -263,23 +267,23 @@ void test_case_2_mult_five_element()
     generate_random_matrix(B, m, p, min_val, max_val);
 
     // Test the matrix multiplication function
-    std::cout << "Testing matrix multiplication..." << std::endl;
+    //cout << "Testing matrix multiplication...\n";
     int** C = matrix_multiply(A, B);
     int** C_ref = matrix_multiply_reference(A, B);
-    if (compare_matrices(C, C_ref)) {
-        std::cout << "Matrix multiplication test passed." << std::endl;
+    if (compare_matrices(C, C_ref) == 1) {
+        //cout << "Matrix multiplication test passed.\n";
     } else {
-        std::cout << "Matrix multiplication test failed." << std::endl;
+        //cout << "Matrix multiplication test failed.\n";
     }
 
     // Free memory for the matrices
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( A[i] );
     }
-    for (int i = 0; i < m; i++) {
+    for (i = 0; i < m; i++) {
         ece4750_free( B[i] );
     }
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( C[i] );
         ece4750_free( C_ref[i] );
     }
@@ -289,7 +293,7 @@ void test_case_2_mult_five_element()
     ece4750_free(C_ref);
 
     // Compare each element of matrices "C" and "C_ref"
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
             // If an element of "C" is not equal to the corresponding element of "C_ref", return false
             ECE4750_CHECK_INT_EQ( C[i] , C_ref[i] );
@@ -315,15 +319,16 @@ void test_case_3_mult_small_zeros()
     const int p = 3;
     const int min_val = 0;
     const int max_val = 0;
+    int i = 0;
 
     // Allocate memory for the input matrices
-    int** A = ece4750_malloc( int 32 ) int*[n];
-    int** B = ece4750_malloc( int 32 ) int*[m];
-    for (int i = 0; i < n; i++) {
-        A[i] = ece4750_malloc( int 32 ) int[m];
+    int** A = ece4750_malloc( 32 ) ;
+    int** B = ece4750_malloc( 32 ) ;
+    for (i = 0; i < n; i++) {
+        A[i] = ece4750_malloc( 32 );
     }
-    for (int i = 0; i < m; i++) {
-        B[i] = ece4750_malloc( int 32 ) int[p];
+    for (i = 0; i < m; i++) {
+        B[i] = ece4750_malloc( 32 ); 
     }
 
     // Generate random values for the input matrices
@@ -331,23 +336,23 @@ void test_case_3_mult_small_zeros()
     generate_random_matrix(B, m, p, min_val, max_val);
 
     // Test the matrix multiplication function
-    std::cout << "Testing matrix multiplication..." << std::endl;
+    //cout << "Testing matrix multiplication...\n";
     int** C = matrix_multiply(A, B);
     int** C_ref = matrix_multiply_reference(A, B);
-    if (compare_matrices(C, C_ref)) {
-        std::cout << "Matrix multiplication test passed." << std::endl;
+    if (compare_matrices(C, C_ref) == 1) {
+        //cout << "Matrix multiplication test passed.\n";
     } else {
-        std::cout << "Matrix multiplication test failed." << std::endl;
+        //cout << "Matrix multiplication test failed.\n";
     }
 
     // Free memory for the matrices
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( A[i] );
     }
-    for (int i = 0; i < m; i++) {
+    for (i = 0; i < m; i++) {
         ece4750_free( B[i] );
     }
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( C[i] );
         ece4750_free( C_ref[i] );
     }
@@ -357,7 +362,7 @@ void test_case_3_mult_small_zeros()
     ece4750_free(C_ref);
 
     // Compare each element of matrices "C" and "C_ref"
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
             // If an element of "C" is not equal to the corresponding element of "C_ref", return false
             ECE4750_CHECK_INT_EQ( C[i] , C_ref[i] );
@@ -380,15 +385,16 @@ void test_case_4_mult_one_element()
     const int p = 1;
     const int min_val = 0;
     const int max_val = 5;
+    int i = 0;
 
     // Allocate memory for the input matrices
-    int** A = ece4750_malloc( int 32 ) int*[n];
-    int** B = ece4750_malloc( int 32 ) int*[m];
-    for (int i = 0; i < n; i++) {
-        A[i] = ece4750_malloc( int 32 ) int[m];
+    int** A = ece4750_malloc( 32 ) ;
+    int** B = ece4750_malloc( 32 ) ;
+    for (i = 0; i < n; i++) {
+        A[i] = ece4750_malloc( 32 );
     }
-    for (int i = 0; i < m; i++) {
-        B[i] = ece4750_malloc( int 32 ) int[p];
+    for (i = 0; i < m; i++) {
+        B[i] = ece4750_malloc( 32 ); 
     }
 
     // Generate random values for the input matrices
@@ -396,23 +402,23 @@ void test_case_4_mult_one_element()
     generate_random_matrix(B, m, p, min_val, max_val);
 
     // Test the matrix multiplication function
-    std::cout << "Testing matrix multiplication..." << std::endl;
+    //cout << "Testing matrix multiplication...\n";
     int** C = matrix_multiply(A, B);
     int** C_ref = matrix_multiply_reference(A, B);
-    if (compare_matrices(C, C_ref)) {
-        std::cout << "Matrix multiplication test passed." << std::endl;
+    if (compare_matrices(C, C_ref) == 1) {
+        //cout << "Matrix multiplication test passed.\n";
     } else {
-        std::cout << "Matrix multiplication test failed." << std::endl;
+        //cout << "Matrix multiplication test failed.\n";
     }
 
     // Free memory for the matrices
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( A[i] );
     }
-    for (int i = 0; i < m; i++) {
+    for (i = 0; i < m; i++) {
         ece4750_free( B[i] );
     }
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( C[i] );
         ece4750_free( C_ref[i] );
     }
@@ -422,7 +428,7 @@ void test_case_4_mult_one_element()
     ece4750_free(C_ref);
 
     // Compare each element of matrices "C" and "C_ref"
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
             // If an element of "C" is not equal to the corresponding element of "C_ref", return false
             ECE4750_CHECK_INT_EQ( C[i] , C_ref[i] );
@@ -445,15 +451,16 @@ void test_case_5_sort_two_element()
     const int p = 2;
     const int min_val = 0;
     const int max_val = 5;
+    int i = 0;
 
     // Allocate memory for the input matrices
-    int** A = ece4750_malloc( int 32 ) int*[n];
-    int** B = ece4750_malloc( int 32 ) int*[m];
-    for (int i = 0; i < n; i++) {
-        A[i] = ece4750_malloc( int 32 ) int[m];
+    int** A = ece4750_malloc( 32 ) ;
+    int** B = ece4750_malloc( 32 ) ;
+    for (i = 0; i < n; i++) {
+        A[i] = ece4750_malloc( 32 );
     }
-    for (int i = 0; i < m; i++) {
-        B[i] = ece4750_malloc( int 32 ) int[p];
+    for (i = 0; i < m; i++) {
+        B[i] = ece4750_malloc( 32 ); 
     }
 
     // Generate random values for the input matrices
@@ -461,23 +468,23 @@ void test_case_5_sort_two_element()
     generate_random_matrix(B, m, p, min_val, max_val);
 
     // Test the matrix multiplication function
-    std::cout << "Testing matrix multiplication..." << std::endl;
+    //cout << "Testing matrix multiplication...\n";
     int** C = matrix_multiply(A, B);
     int** C_ref = matrix_multiply_reference(A, B);
-    if (compare_matrices(C, C_ref)) {
-        std::cout << "Matrix multiplication test passed." << std::endl;
+    if (compare_matrices(C, C_ref) == 1) {
+        //cout << "Matrix multiplication test passed.\n";
     } else {
-        std::cout << "Matrix multiplication test failed." << std::endl;
+        //cout << "Matrix multiplication test failed.\n";
     }
 
     // Free memory for the matrices
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( A[i] );
     }
-    for (int i = 0; i < m; i++) {
+    for (i = 0; i < m; i++) {
         ece4750_free( B[i] );
     }
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( C[i] );
         ece4750_free( C_ref[i] );
     }
@@ -487,7 +494,7 @@ void test_case_5_sort_two_element()
     ece4750_free(C_ref);
 
     // Compare each element of matrices "C" and "C_ref"
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
             // If an element of "C" is not equal to the corresponding element of "C_ref", return false
             ECE4750_CHECK_INT_EQ( C[i] , C_ref[i] );
@@ -510,15 +517,16 @@ void test_case_6_mult_larger_matrix()
     const int p = 10;
     const int min_val = 0;
     const int max_val = 5;
+    int i = 0;
 
     // Allocate memory for the input matrices
-    int** A = ece4750_malloc( int 32 ) int*[n];
-    int** B = ece4750_malloc( int 32 ) int*[m];
-    for (int i = 0; i < n; i++) {
-        A[i] = ece4750_malloc( int 32 ) int[m];
+    int** A = ece4750_malloc( 32 ) ;
+    int** B = ece4750_malloc( 32 ) ;
+    for (i = 0; i < n; i++) {
+        A[i] = ece4750_malloc( 32 );
     }
-    for (int i = 0; i < m; i++) {
-        B[i] = ece4750_malloc( int 32 ) int[p];
+    for (i = 0; i < m; i++) {
+        B[i] = ece4750_malloc( 32 ); 
     }
 
     // Generate random values for the input matrices
@@ -526,23 +534,23 @@ void test_case_6_mult_larger_matrix()
     generate_random_matrix(B, m, p, min_val, max_val);
 
     // Test the matrix multiplication function
-    std::cout << "Testing matrix multiplication..." << std::endl;
+    //cout << "Testing matrix multiplication...\n";
     int** C = matrix_multiply(A, B);
     int** C_ref = matrix_multiply_reference(A, B);
-    if (compare_matrices(C, C_ref)) {
-        std::cout << "Matrix multiplication test passed." << std::endl;
+    if (compare_matrices(C, C_ref) == 1) {
+        //cout << "Matrix multiplication test passed.\n";
     } else {
-        std::cout << "Matrix multiplication test failed." << std::endl;
+        //cout << "Matrix multiplication test failed.\n";
     }
 
     // Free memory for the matrices
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( A[i] );
     }
-    for (int i = 0; i < m; i++) {
+    for (i = 0; i < m; i++) {
         ece4750_free( B[i] );
     }
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( C[i] );
         ece4750_free( C_ref[i] );
     }
@@ -552,7 +560,7 @@ void test_case_6_mult_larger_matrix()
     ece4750_free(C_ref);
 
     // Compare each element of matrices "C" and "C_ref"
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
             // If an element of "C" is not equal to the corresponding element of "C_ref", return false
             ECE4750_CHECK_INT_EQ( C[i] , C_ref[i] );
@@ -577,15 +585,16 @@ ECE4750_CHECK( L"test_case_7_mult_larger_matrix_larger_values" );
     const int p = 25;
     const int min_val = 0;
     const int max_val = 100;
+    int i = 0;
 
     // Allocate memory for the input matrices
-    int** A = ece4750_malloc( int 32 ) int*[n];
-    int** B = ece4750_malloc( int 32 ) int*[m];
-    for (int i = 0; i < n; i++) {
-        A[i] = ece4750_malloc( int 32 ) int[m];
+    int** A = ece4750_malloc( 32 ) ;
+    int** B = ece4750_malloc( 32 ) ;
+    for (i = 0; i < n; i++) {
+        A[i] = ece4750_malloc( 32 );
     }
-    for (int i = 0; i < m; i++) {
-        B[i] = ece4750_malloc( int 32 ) int[p];
+    for (i = 0; i < m; i++) {
+        B[i] = ece4750_malloc( 32 ); 
     }
 
     // Generate random values for the input matrices
@@ -593,23 +602,23 @@ ECE4750_CHECK( L"test_case_7_mult_larger_matrix_larger_values" );
     generate_random_matrix(B, m, p, min_val, max_val);
 
     // Test the matrix multiplication function
-    std::cout << "Testing matrix multiplication..." << std::endl;
+    //cout << "Testing matrix multiplication...\n";
     int** C = matrix_multiply(A, B);
     int** C_ref = matrix_multiply_reference(A, B);
-    if (compare_matrices(C, C_ref)) {
-        std::cout << "Matrix multiplication test passed." << std::endl;
+    if (compare_matrices(C, C_ref) == 1) {
+        //cout << "Matrix multiplication test passed.\n";
     } else {
-        std::cout << "Matrix multiplication test failed." << std::endl;
+        //cout << "Matrix multiplication test failed.\n";
     }
 
     // Free memory for the matrices
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( A[i] );
     }
-    for (int i = 0; i < m; i++) {
+    for (i = 0; i < m; i++) {
         ece4750_free( B[i] );
     }
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( C[i] );
         ece4750_free( C_ref[i] );
     }
@@ -619,7 +628,7 @@ ECE4750_CHECK( L"test_case_7_mult_larger_matrix_larger_values" );
     ece4750_free(C_ref);
 
     // Compare each element of matrices "C" and "C_ref"
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
             // If an element of "C" is not equal to the corresponding element of "C_ref", return false
             ECE4750_CHECK_INT_EQ( C[i] , C_ref[i] );
@@ -642,15 +651,16 @@ void test_case_8_mult_max_size_small_values()
     const int p = 64;
     const int min_val = 0;
     const int max_val = 5;
+    int i = 0;
 
     // Allocate memory for the input matrices
-    int** A = ece4750_malloc( int 32 ) int*[n];
-    int** B = ece4750_malloc( int 32 ) int*[m];
-    for (int i = 0; i < n; i++) {
-        A[i] = ece4750_malloc( int 32 ) int[m];
+    int** A = ece4750_malloc( 32 ) ;
+    int** B = ece4750_malloc( 32 ) ;
+    for (i = 0; i < n; i++) {
+        A[i] = ece4750_malloc( 32 );
     }
-    for (int i = 0; i < m; i++) {
-        B[i] = ece4750_malloc( int 32 ) int[p];
+    for (i = 0; i < m; i++) {
+        B[i] = ece4750_malloc( 32 ); 
     }
 
     // Generate random values for the input matrices
@@ -658,23 +668,23 @@ void test_case_8_mult_max_size_small_values()
     generate_random_matrix(B, m, p, min_val, max_val);
 
     // Test the matrix multiplication function
-    std::cout << "Testing matrix multiplication..." << std::endl;
+    //cout << "Testing matrix multiplication...\n";
     int** C = matrix_multiply(A, B);
     int** C_ref = matrix_multiply_reference(A, B);
-    if (compare_matrices(C, C_ref)) {
-        std::cout << "Matrix multiplication test passed." << std::endl;
+    if (compare_matrices(C, C_ref) == 1) {
+        //cout << "Matrix multiplication test passed.\n";
     } else {
-        std::cout << "Matrix multiplication test failed." << std::endl;
+        //cout << "Matrix multiplication test failed.\n";
     }
 
     // Free memory for the matrices
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( A[i] );
     }
-    for (int i = 0; i < m; i++) {
+    for (i = 0; i < m; i++) {
         ece4750_free( B[i] );
     }
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( C[i] );
         ece4750_free( C_ref[i] );
     }
@@ -684,7 +694,7 @@ void test_case_8_mult_max_size_small_values()
     ece4750_free(C_ref);
 
     // Compare each element of matrices "C" and "C_ref"
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
             // If an element of "C" is not equal to the corresponding element of "C_ref", return false
             ECE4750_CHECK_INT_EQ( C[i] , C_ref[i] );
@@ -707,15 +717,16 @@ void test_case_9_mult_max_size_medium_values()
     const int p = 64;
     const int min_val = 0;
     const int max_val = 100;
+    int i = 0;
 
     // Allocate memory for the input matrices
-    int** A = ece4750_malloc( int 32 ) int*[n];
-    int** B = ece4750_malloc( int 32 ) int*[m];
-    for (int i = 0; i < n; i++) {
-        A[i] = ece4750_malloc( int 32 ) int[m];
+    int** A = ece4750_malloc( 32 ) ;
+    int** B = ece4750_malloc( 32 ) ;
+    for (i = 0; i < n; i++) {
+        A[i] = ece4750_malloc( 32 );
     }
-    for (int i = 0; i < m; i++) {
-        B[i] = ece4750_malloc( int 32 ) int[p];
+    for (i = 0; i < m; i++) {
+        B[i] = ece4750_malloc( 32 ); 
     }
 
     // Generate random values for the input matrices
@@ -723,23 +734,23 @@ void test_case_9_mult_max_size_medium_values()
     generate_random_matrix(B, m, p, min_val, max_val);
 
     // Test the matrix multiplication function
-    std::cout << "Testing matrix multiplication..." << std::endl;
+    //cout << "Testing matrix multiplication...\n";
     int** C = matrix_multiply(A, B);
     int** C_ref = matrix_multiply_reference(A, B);
-    if (compare_matrices(C, C_ref)) {
-        std::cout << "Matrix multiplication test passed." << std::endl;
+    if (compare_matrices(C, C_ref) == 1) {
+        //cout << "Matrix multiplication test passed.\n";
     } else {
-        std::cout << "Matrix multiplication test failed." << std::endl;
+        //cout << "Matrix multiplication test failed.\n";
     }
 
     // Free memory for the matrices
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( A[i] );
     }
-    for (int i = 0; i < m; i++) {
+    for (i = 0; i < m; i++) {
         ece4750_free( B[i] );
     }
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( C[i] );
         ece4750_free( C_ref[i] );
     }
@@ -749,7 +760,7 @@ void test_case_9_mult_max_size_medium_values()
     ece4750_free(C_ref);
 
     // Compare each element of matrices "C" and "C_ref"
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
             // If an element of "C" is not equal to the corresponding element of "C_ref", return false
             ECE4750_CHECK_INT_EQ( C[i] , C_ref[i] );
@@ -772,15 +783,16 @@ void test_case_10_mult_max_size_large_values()
     const int p = 64;
     const int min_val = 0;
     const int max_val = 1000;
+    int i = 0;
 
     // Allocate memory for the input matrices
-    int** A = ece4750_malloc( int 32 ) int*[n];
-    int** B = ece4750_malloc( int 32 ) int*[m];
-    for (int i = 0; i < n; i++) {
-        A[i] = ece4750_malloc( int 32 ) int[m];
+    int** A = ece4750_malloc( 32 ) ;
+    int** B = ece4750_malloc( 32 ) ;
+    for (i = 0; i < n; i++) {
+        A[i] = ece4750_malloc( 32 );
     }
-    for (int i = 0; i < m; i++) {
-        B[i] = ece4750_malloc( int 32 ) int[p];
+    for (i = 0; i < m; i++) {
+        B[i] = ece4750_malloc( 32 ); 
     }
 
     // Generate random values for the input matrices
@@ -788,23 +800,23 @@ void test_case_10_mult_max_size_large_values()
     generate_random_matrix(B, m, p, min_val, max_val);
 
     // Test the matrix multiplication function
-    std::cout << "Testing matrix multiplication..." << std::endl;
+    //cout << "Testing matrix multiplication...\n";
     int** C = matrix_multiply(A, B);
     int** C_ref = matrix_multiply_reference(A, B);
-    if (compare_matrices(C, C_ref)) {
-        std::cout << "Matrix multiplication test passed." << std::endl;
+    if (compare_matrices(C, C_ref) == 1) {
+        //cout << "Matrix multiplication test passed.\n";
     } else {
-        std::cout << "Matrix multiplication test failed." << std::endl;
+        //cout << "Matrix multiplication test failed.\n";
     }
 
     // Free memory for the matrices
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( A[i] );
     }
-    for (int i = 0; i < m; i++) {
+    for (i = 0; i < m; i++) {
         ece4750_free( B[i] );
     }
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( C[i] );
         ece4750_free( C_ref[i] );
     }
@@ -814,7 +826,7 @@ void test_case_10_mult_max_size_large_values()
     ece4750_free(C_ref);
 
     // Compare each element of matrices "C" and "C_ref"
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
             // If an element of "C" is not equal to the corresponding element of "C_ref", return false
             ECE4750_CHECK_INT_EQ( C[i] , C_ref[i] );
@@ -837,15 +849,16 @@ void test_case_11_mult_max_size_very_large_values()
     const int p = 64;
     const int min_val = 0;
     const int max_val = 100000;
+    int i = 0;
 
     // Allocate memory for the input matrices
-    int** A = ece4750_malloc( int 32 ) int*[n];
-    int** B = ece4750_malloc( int 32 ) int*[m];
-    for (int i = 0; i < n; i++) {
-        A[i] = ece4750_malloc( int 32 ) int[m];
+    int** A = ece4750_malloc( 32 ) ;
+    int** B = ece4750_malloc( 32 ) ;
+    for (i = 0; i < n; i++) {
+        A[i] = ece4750_malloc( 32 );
     }
-    for (int i = 0; i < m; i++) {
-        B[i] = ece4750_malloc( int 32 ) int[p];
+    for (i = 0; i < m; i++) {
+        B[i] = ece4750_malloc( 32 ); 
     }
 
     // Generate random values for the input matrices
@@ -853,23 +866,23 @@ void test_case_11_mult_max_size_very_large_values()
     generate_random_matrix(B, m, p, min_val, max_val);
 
     // Test the matrix multiplication function
-    std::cout << "Testing matrix multiplication..." << std::endl;
+    //cout << "Testing matrix multiplication...\n";
     int** C = matrix_multiply(A, B);
     int** C_ref = matrix_multiply_reference(A, B);
-    if (compare_matrices(C, C_ref)) {
-        std::cout << "Matrix multiplication test passed." << std::endl;
+    if (compare_matrices(C, C_ref) == 1) {
+        //cout << "Matrix multiplication test passed.\n";
     } else {
-        std::cout << "Matrix multiplication test failed." << std::endl;
+        //cout << "Matrix multiplication test failed.\n";
     }
 
     // Free memory for the matrices
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( A[i] );
     }
-    for (int i = 0; i < m; i++) {
+    for (i = 0; i < m; i++) {
         ece4750_free( B[i] );
     }
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( C[i] );
         ece4750_free( C_ref[i] );
     }
@@ -879,7 +892,7 @@ void test_case_11_mult_max_size_very_large_values()
     ece4750_free(C_ref);
 
     // Compare each element of matrices "C" and "C_ref"
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
             // If an element of "C" is not equal to the corresponding element of "C_ref", return false
             ECE4750_CHECK_INT_EQ( C[i] , C_ref[i] );
@@ -902,15 +915,16 @@ const int n = 64;
     const int p = 64;
     const int min_val = 0;
     const int max_val = 100000000;
+    int i = 0;
 
     // Allocate memory for the input matrices
-    int** A = ece4750_malloc( int 32 ) int*[n];
-    int** B = ece4750_malloc( int 32 ) int*[m];
-    for (int i = 0; i < n; i++) {
-        A[i] = ece4750_malloc( int 32 ) int[m];
+    int** A = ece4750_malloc( 32 ) ;
+    int** B = ece4750_malloc( 32 ) ;
+    for (i = 0; i < n; i++) {
+        A[i] = ece4750_malloc( 32 );
     }
-    for (int i = 0; i < m; i++) {
-        B[i] = ece4750_malloc( int 32 ) int[p];
+    for (i = 0; i < m; i++) {
+        B[i] = ece4750_malloc( 32 );
     }
 
     // Generate random values for the input matrices
@@ -918,23 +932,23 @@ const int n = 64;
     generate_random_matrix(B, m, p, min_val, max_val);
 
     // Test the matrix multiplication function
-    std::cout << "Testing matrix multiplication..." << std::endl;
+    //cout << "Testing matrix multiplication...\n";
     int** C = matrix_multiply(A, B);
     int** C_ref = matrix_multiply_reference(A, B);
-    if (compare_matrices(C, C_ref)) {
-        std::cout << "Matrix multiplication test passed." << std::endl;
+    if (compare_matrices(C, C_ref) == 1) {
+        //cout << "Matrix multiplication test passed.\n";
     } else {
-        std::cout << "Matrix multiplication test failed." << std::endl;
+        //cout << "Matrix multiplication test failed.\n";
     }
 
     // Free memory for the matrices
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( A[i] );
     }
-    for (int i = 0; i < m; i++) {
+    for (i = 0; i < m; i++) {
         ece4750_free( B[i] );
     }
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         ece4750_free( C[i] );
         ece4750_free( C_ref[i] );
     }
@@ -944,7 +958,7 @@ const int n = 64;
     ece4750_free(C_ref);
 
     // Compare each element of matrices "C" and "C_ref"
-    for (int i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
             // If an element of "C" is not equal to the corresponding element of "C_ref", return false
             ECE4750_CHECK_INT_EQ( C[i] , C_ref[i] );
